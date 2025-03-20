@@ -11,15 +11,14 @@ router.post("/", protectRoute, async (req, res) => {
     const { title, caption, rating, image } = req.body;
 
     if (!image || !title || !caption || !rating) {
-      return res
-        .status(400)
-        .json({ message: "Vui lòng không bỏ trống các ô nhập!" });
+      return res.status(400).json({ message: "Please provide all fields" });
     }
 
-    // upload image to cloudinary
+    // upload the image to cloudinary
     const uploadResponse = await cloudinary.uploader.upload(image);
     const imageUrl = uploadResponse.secure_url;
-    //save to db
+
+    // save to the database
     const newBook = new Book({
       title,
       caption,
@@ -27,12 +26,12 @@ router.post("/", protectRoute, async (req, res) => {
       image: imageUrl,
       user: req.user._id,
     });
+
     await newBook.save();
 
-    return res.status(201).json(newBook);
+    res.status(201).json(newBook);
   } catch (error) {
     console.log("Error creating book", error);
-
     res.status(500).json({ message: error.message });
   }
 });
