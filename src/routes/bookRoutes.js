@@ -100,4 +100,14 @@ router.delete("/:id", protectRoute, async (req, res) => {
   }
 });
 
+router.get("/user", protectRoute, async (req, res) => {
+  try {
+    const book = await Book.find({ user: user._id }).sort({ createdAt: -1 });
+    res.json(books);
+  } catch (error) {
+    console.error("Get user books error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;
